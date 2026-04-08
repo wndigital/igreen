@@ -194,3 +194,16 @@ app.get('/', async (req, res) => {
 });
 
 app.listen(PORT, () => console.log('iGreen API v3 rodando na porta', PORT));
+
+
+// Rota extra — liberar slot ao excluir agendamento
+app.post('/slots/liberar', async (req, res) => {
+  try {
+    const { campanha, hora } = req.body;
+    await pool.query(
+      'UPDATE horarios SET disponivel = TRUE, bloqueado_em = NULL WHERE campanha = $1 AND hora = $2',
+      [campanha, hora]
+    );
+    res.json({ ok: true });
+  } catch(e) { res.json({ ok: false, msg: e.message }); }
+});
